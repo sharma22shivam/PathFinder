@@ -1,0 +1,118 @@
+<div id="particle-container">
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+	<div class="particle"></div>
+</div>
+<div class="background">
+  <div class="body-panel">
+    <h1 class="title">Path finder</h1>
+    <mat-card class="base-card" *ngIf="!pathView">
+      <mat-card-title class="base-form-title">
+        <h3>Let's find your trip</h3>
+      </mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="pathForm">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="source">
+            <mat-label>Source</mat-label>
+            <input matInput formControlName="source" required [matAutocomplete]="source">
+             <mat-autocomplete autoActiveFirstOption #source="matAutocomplete">
+      <mat-option *ngFor="let option of autoSource | async" [value]="option">
+        {{option}}
+      </mat-option>
+    </mat-autocomplete>
+            <mat-error>Please enter a source for your trip.</mat-error>
+
+        </mat-form-field>
+        </div>
+          <div class="form-row">
+         <mat-form-field appearance="outline" class="source">
+            <mat-label>Destination</mat-label>
+            <input matInput formControlName="destination" required [matAutocomplete]="dest">
+            <mat-error>Please enter a destination for your trip.</mat-error>
+             <mat-autocomplete autoActiveFirstOption #dest="matAutocomplete">
+      <mat-option *ngFor="let option of autoDest | async" [value]="option">
+        {{option}}
+      </mat-option>
+    </mat-autocomplete>
+        </mat-form-field>
+        </div>
+        <div class="form-row">
+          <h4>Select trip style that suits you</h4>
+          <mat-button-toggle-group  aria-label="mode" formControlName="mode">
+              <mat-button-toggle value="cost">Cheapest</mat-button-toggle>
+              <mat-button-toggle value="time">Fastest</mat-button-toggle>
+        </mat-button-toggle-group>
+        </div>
+        </form>
+      <h4 class="error" *ngIf="error">{{error}}</h4>
+      </mat-card-content>
+      <mat-card-actions class="bottom-sheet">
+        <button  mat-raised-button color="primary" class="btn" [disabled]="!pathForm.valid" (click)="findPath()"> Find my trip</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="base-card " *ngIf="pathView">
+       <mat-card-title class="base-form-title path-view">
+        <div class="back-div">
+        <button mat-icon-button aria-label="Example icon button with a vertical three dot icon"  (click)="backToEdit()" matTooltip="Back to trip finder.">
+          <img src="https://img.icons8.com/ios-glyphs/30/000000/back.png"/>
+      </button>
+    </div>
+        <div class="title-div">Your trip from "{{pathForm.value.source | titlecase}}" to "{{pathForm.value.destination | titlecase}}" - ({{pathForm.value.mode === 'cost' ? 'Cheapest': 'Fastest'}})</div>
+      </mat-card-title>
+
+    <mat-card-content class="trip-body">
+      <mat-card class="trip-card" *ngFor="let node of route">
+        <mat-card-title>
+          {{node.departure}} > {{node.arrival}} (By {{node.transport}})
+        </mat-card-title>
+        <mat-card-content>
+          <div style="display: flex;">
+            <div class="cost">Cost: <span class="bold">{{node.cost | currency: currency:'symbol'}} </span></div>
+            <div class="voucher">Voucher code: <span class="bold">{{node.reference}}</span></div>
+            <div *ngIf="node.discount" class="discount">Discount: <span class="bold">{{node.discount}}%</span></div>
+            <div class="duration">Duration: <span class="bold">{{node.duration.h}}H:{{node.duration.m}}m</span></div>
+          </div>
+        </mat-card-content>
+
+      </mat-card>
+    </mat-card-content>
+
+        <mat-card-actions style="display: flex;">
+          <h4 style="flex-grow: 1;width: 50%;"></h4>
+          <h4 *ngIf="pathForm.value.mode === 'cost'" style="flex-grow: 1;width: 50%; text-align: right;">Total cost of your trip: {{cost | currency:currency:'symbol':'2.2-4'}}</h4>
+          <h4 *ngIf="pathForm.value.mode === 'time'" style="flex-grow: 1;width: 50%; text-align: right;">Total duration of your trip: {{cost.h}}H:{{cost.m}}m</h4>
+
+        </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
+
